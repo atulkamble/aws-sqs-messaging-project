@@ -54,7 +54,10 @@ echo "Queue $QUEUE_NAME created successfully."
 ## 📦 2. Install Python Requirements
 
 **`requirements.txt`**
-
+Manually Check boto3 version and try installation of it on mac
+```
+pip show boto3
+pip install boto3
 ```
 boto3
 ```
