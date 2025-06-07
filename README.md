@@ -56,14 +56,15 @@ echo "Queue $QUEUE_NAME created successfully."
 **`requirements.txt`**
 Manually Check boto3 version and try installation of it on mac
 ```
-pip show boto3
-pip install boto3
+pip3 show boto3
+pip3 install boto3
+```
 ```
 boto3
 ```
 
 ```bash
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
 ---
