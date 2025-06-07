@@ -27,6 +27,7 @@ sqs-project/
 ├── send_message.py
 ├── receive_message.py
 ├── delete_message.py
+├── delete_queue.sh
 └── requirements.txt
 ```
 
@@ -155,6 +156,22 @@ print("🗑️ Message deleted successfully.")
 
 ---
 
+**`delete_queue.sh`**
+
+```bash
+#!/bin/bash
+
+QUEUE_NAME="MyTestQueue"
+
+# Get queue URL
+QUEUE_URL=$(aws sqs get-queue-url --queue-name "$QUEUE_NAME" --query 'QueueUrl' --output text)
+
+# Delete the queue
+aws sqs delete-queue --queue-url "$QUEUE_URL"
+
+echo "🗑️ Queue $QUEUE_NAME deleted successfully."
+```
+
 ## 🚀 How to Run
 
 ```bash
@@ -165,13 +182,16 @@ bash create_queue.sh
 pip install -r requirements.txt
 
 # Step 3: Send a message
-python send_message.py
+python3 send_message.py
 
 # Step 4: Receive a message
-python receive_message.py
+python3 receive_message.py
 
 # Step 5: Delete the message
-python delete_message.py
+python3 delete_message.py
+
+# Step 6: Delete the Queue
+bash delete_queue.sh
 ```
 
 ---
