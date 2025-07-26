@@ -1,27 +1,115 @@
-AWS SQS Project that demonstrates how to create an SQS queue, send a message, and receive/delete the message using the AWS CLI and a Python script (Boto3).
+# 🚀 **Simple AWS SQS Messaging System with Python & AWS CLI**
 
 ---
 
-## ✅ Project Title: **Simple AWS SQS Messaging System**
+## 🎯 **Objective**
 
-### 🎯 Objective:
+Build a simple messaging system using **AWS SQS** that:
 
-Create an AWS SQS standard queue, send messages into it, retrieve messages separately, and delete them using Python (Boto3) and AWS CLI.
-
----
-
-## 🔧 Project Prerequisites:
-
-1. **AWS CLI Installed & Configured**
-2. **IAM User with `AmazonSQSFullAccess`**
-3. **Python 3.x and Boto3 installed**
+* Creates a Standard Queue
+* Sends a message
+* Retrieves the message
+* Deletes the message
+* Deletes the queue
 
 ---
 
-## 📁 Project Structure
+## 📋 **Prerequisites**
+
+### 💻 Local Setup
+
+1. **Python 3.x**
+2. **Boto3 library**
+3. **AWS CLI installed & configured**
+
+### 🔐 AWS Setup
+
+* An IAM user with `AmazonSQSFullAccess`
+* Access key and secret configured via `aws configure`
+
+---
+
+## 🔧 1. Install Python & AWS CLI
+
+### ✅ Check Python
+
+```bash
+python --version
+python3 --version
+```
+
+### 🪟 Install Python (Windows - PowerShell Admin)
+
+```powershell
+choco install python
+```
+
+### ✅ Check AWS CLI
+
+```bash
+aws --version
+```
+
+If not installed, follow [https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
+
+---
+
+## 🔐 2. IAM User Setup
+
+1. **Go to AWS Console → IAM → Users → Add user**
+2. Username: `atul`
+3. Access Type: ✅ Programmatic access
+4. Add to Group: `admin` with `AdministratorAccess` or `AmazonSQSFullAccess`
+5. Download `.csv` file with:
+
+   * **Access Key ID**
+   * **Secret Access Key**
+
+---
+
+## ⚙️ 3. Configure AWS CLI
+
+```bash
+aws configure
+```
+
+Enter the following when prompted:
+
+* Access Key ID
+* Secret Access Key
+* Region: `us-east-1`
+* Output Format: `json`
+
+Verify:
+
+```bash
+aws s3 ls
+```
+
+---
+
+## 💻 4. EC2 Setup (Optional Remote Execution)
+
+SSH into EC2 (Amazon Linux):
+
+```bash
+ssh -i <your-key.pem> ec2-user@<ec2-ip>
+```
+
+Install required packages:
+
+```bash
+sudo yum install git python3 -y
+sudo yum install python3-pip -y
+pip3 install boto3
+```
+
+---
+
+## 📁 5. Project Structure
 
 ```
-sqs-project/
+aws-sqs-messaging-project/
 │
 ├── create_queue.sh
 ├── send_message.py
@@ -33,9 +121,9 @@ sqs-project/
 
 ---
 
-## 🛠️ 1. Create Queue using AWS CLI
+## 🧱 6. Project Code
 
-**`create_queue.sh`**
+### 🪄 create\_queue.sh
 
 ```bash
 #!/bin/bash
@@ -46,32 +134,33 @@ aws sqs create-queue \
   --queue-name $QUEUE_NAME \
   --attributes VisibilityTimeout=60
 
-echo "Queue $QUEUE_NAME created successfully."
+echo "✅ Queue $QUEUE_NAME created successfully."
 ```
 
 ---
 
-## 📦 2. Install Python Requirements
+### 📦 requirements.txt
 
-**`requirements.txt`**
-Manually Check boto3 version and try installation of it on mac
-```
-pip3 show boto3
-pip3 install boto3
-```
 ```
 boto3
 ```
+
+Install it:
 
 ```bash
 pip3 install -r requirements.txt
 ```
 
+Or check manually:
+
+```bash
+pip3 show boto3
+pip3 install boto3
+```
+
 ---
 
-## ✉️ 3. Send Message
-
-**`send_message.py`**
+### ✉️ send\_message.py
 
 ```python
 import boto3
@@ -92,9 +181,7 @@ print("🆔 Message ID:", response['MessageId'])
 
 ---
 
-## 📥 4. Receive Message (Only)
-
-**`receive_message.py`**
+### 📥 receive\_message.py
 
 ```python
 import boto3
@@ -119,16 +206,13 @@ else:
         print("📨 Received:", msg['Body'])
         print("🧾 ReceiptHandle:", msg['ReceiptHandle'])
 
-        # Save receipt handle to file for deletion step
         with open('last_receipt_handle.json', 'w') as f:
             json.dump({'ReceiptHandle': msg['ReceiptHandle']}, f)
 ```
 
 ---
 
-## 🗑️ 5. Delete Message (Only)
-
-**`delete_message.py`**
+### 🗑️ delete\_message.py
 
 ```python
 import boto3
@@ -140,7 +224,6 @@ sqs = boto3.client('sqs')
 
 queue_url = sqs.get_queue_url(QueueName=queue_name)['QueueUrl']
 
-# Read ReceiptHandle from file
 if not os.path.exists('last_receipt_handle.json'):
     print("❌ No receipt handle found. Run receive_message.py first.")
     exit()
@@ -160,35 +243,39 @@ print("🗑️ Message deleted successfully.")
 
 ---
 
-**`delete_queue.sh`**
+### 🧹 delete\_queue.sh
 
 ```bash
 #!/bin/bash
 
 QUEUE_NAME="MyTestQueue"
 
-# Get queue URL
 QUEUE_URL=$(aws sqs get-queue-url --queue-name "$QUEUE_NAME" --query 'QueueUrl' --output text)
 
-# Delete the queue
 aws sqs delete-queue --queue-url "$QUEUE_URL"
 
 echo "🗑️ Queue $QUEUE_NAME deleted successfully."
 ```
 
-## 🚀 How to Run
+---
+
+## ▶️ 7. How to Run This Project
 
 ```bash
+# Clone the repository
+git clone https://github.com/atulkamble/aws-sqs-messaging-project.git
+cd aws-sqs-messaging-project
+
 # Step 1: Create the Queue
 bash create_queue.sh
 
-# Step 2: Install Python packages
-pip install -r requirements.txt
+# Step 2: Install Dependencies
+pip3 install -r requirements.txt
 
 # Step 3: Send a message
 python3 send_message.py
 
-# Step 4: Receive a message
+# Step 4: Receive the message
 python3 receive_message.py
 
 # Step 5: Delete the message
@@ -202,10 +289,12 @@ bash delete_queue.sh
 
 ## ✅ Expected Output
 
-* Message sent with ID confirmation
-* Message received with ReceiptHandle shown
-* Message deleted after using stored ReceiptHandle
+| Step         | Output                             |
+| ------------ | ---------------------------------- |
+| Create Queue | ✅ Queue created successfully       |
+| Send Message | ✅ Message sent! with 🆔 Message ID |
+| Receive Msg  | 📨 Message Body + 🧾 ReceiptHandle |
+| Delete Msg   | 🗑️ Message deleted successfully   |
+| Delete Queue | 🗑️ Queue deleted successfully     |
 
 ---
-
-Let me know if you'd like to add visibility timeout handling, batch messaging, or Dead Letter Queue (DLQ) integration.
