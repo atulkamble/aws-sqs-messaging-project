@@ -1,6 +1,25 @@
 # 🚀 **Simple AWS SQS Messaging System with Python & AWS CLI**
 
 ---
+```
+sudo yum install git -y 
+sudo yum install python3-pip  
+pip install boto3
+
+git clone https://github.com/atulkamble/aws-sqs-messaging-project.git
+cd aws-sqs-messaging-project
+
+chmod +x create_queue.sh
+./create_queue.sh
+
+python3 send_message.py
+
+python3 receive_message.py
+
+chmod +x delete_queue.sh
+./delete_queue.sh
+
+```
 
 ## 🎯 **Objective**
 
